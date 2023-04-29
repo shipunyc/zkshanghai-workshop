@@ -274,3 +274,38 @@ sign = 0
 ```
 因为数字太大了，会溢出？
 ```
+
+## 第6题 少于 LessThan
+扩展 1
+```
+template LessThan(n) {
+    assert(n <= 252);
+    signal input in[2];
+    signal output out;
+
+    component n2b = Num2Bits(n+1);
+
+    n2b.in <== in[0]+ (1<<n) - in[1];
+
+    out <== 1-n2b.out[n];
+}
+```
+
+扩展 2：编写 LessEqThan（测试 in[0] 是否 ≤ in[1]）、GreaterThan 和 GreaterEqThan
+```
+template LessEqThan(n) {
+    assert(n <= 252);
+    signal input in[2];
+    signal output out;
+
+    component n2b = Num2Bits(n+1);
+    component eq = IsEqual();
+
+    n2b.in <== in[0]+ (1<<n) - in[1];
+    eq.in <== in;
+
+    out <== 1 - (n2b.out[n]) * (1 - eq.out);
+}
+
+```
+GreaterThan 和 GreaterEqThan 只需要反转LessThan和LessEqThan里边 in[0]和in[1]的顺序即可。
